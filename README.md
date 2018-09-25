@@ -1,4 +1,4 @@
-# Budget_Tacker
+# Budget_Tracker
 
 GUI application to keep track of a household’s budget. 
 
