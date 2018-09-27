@@ -9,23 +9,23 @@ import java.util.Random;
 public class BudgetTracker {
 
     public static void main(String[] args){
-        System.out.println("Hello World!");
-
-        double ranNum = Math.round(Math.random() * 4);
-        if (ranNum == 0){
-            ranNum++;
-        }
-        System.out.println(ranNum);
-
-
-//        try {
-////            DBManager.createTable();
-//            DBManager.insertIntoTable();
-//            DBManager.getValues();
-////            DBManager.dropTable();
-//        } catch (SQLException e){
-//            System.out.println(e.getMessage());
+//        System.out.println("Hello World!");
+//
+//        double ranNum = Math.round(Math.random() * 4);
+//        if (ranNum == 0){
+//            ranNum++;
 //        }
+//        System.out.println(ranNum);
+
+
+        try {
+            DBManager.createTable();
+            DBManager.insertIntoTable();
+            DBManager.getValues();
+//            DBManager.dropTable();
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
 
     }
 }

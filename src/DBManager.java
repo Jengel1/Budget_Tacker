@@ -74,6 +74,7 @@ public class DBManager {
         }
 
         System.out.println(myArr.toString());
+        conn.close();
     }
 
     public static void dropTable() throws SQLException {
