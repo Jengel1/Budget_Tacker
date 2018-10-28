@@ -7,7 +7,10 @@ import java.util.Arrays;
  */
 public class DBManager {
 
-    static String filePath = "C:\\Users\\Jerali\\Documents\\Github\\budget_tracker\\BudgetTrackerTestData\\";
+    /*
+    CSV Files containing all financial info
+     */
+    static String filePath = "C:\\Users\\Jerali\\Documents\\Github\\budget_tracker\\BudgetTrackerTestData\\";  //main file path
     static String csvAspFile = filePath + "Aspiration.csv";
     static String csvCap1File = filePath + "CapitalOne.csv";
     static String csvBarFile = filePath + "Barclay.csv";
@@ -21,22 +24,24 @@ public class DBManager {
     public static final String BANK_DESCRIPTION = "description";
     public static final String BANK_CATEGORY = "category";
     public static final String BANK_AMOUNT = "amount";
+    public static final String BANK_BALANCE = "balance";
     public static final String BANK_DATE = "date";
     //Constant for retrieving bank transactions data
     public static final String ALL_BANK_TRANSACTIONS_COLUMNS = BANK_DESCRIPTION + ", " + BANK_CATEGORY + ", " +
-            BANK_AMOUNT + ", " + BANK_DATE;
+            BANK_AMOUNT + ", " + BANK_BALANCE + ", " + BANK_DATE;
     //SQL statement to create bank transactions table
     public static final String BANK_TRANSACTIONS_TABLE_CREATE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_BANK_TRANSACTIONS + " (" +
                     BANK_DESCRIPTION + " TEXT NOT NULL, " +
                     BANK_CATEGORY + " TEXT, " +
                     BANK_AMOUNT + " DECIMAL(10, 5) NOT NULL, " +
+                    BANK_BALANCE + " DECIMAL(10, 5) NOT NULL, " +
                     BANK_DATE + " TEXT NOT NULL" +
                     ")";
     //SQL statement to insert values into bank transactions table
     public static final String BANK_TRANSACTIONS_TABLE_INSERT =
             "INSERT INTO " + TABLE_BANK_TRANSACTIONS + " (" + ALL_BANK_TRANSACTIONS_COLUMNS + ") VALUES " +
-                    CSV_ETL.loadValuesToDB(CSV_ETL.transformAspiration(CSV_ETL.extractCSVFile(csvAspFile)));
+                    CSV_ETL.loadValuesToDB(CSV_ETL.transformAspiration(CSV_ETL.extractCSVFile(csvAspFile)));  //use CSV_ETL methods to retrieve values from files
     //SQL statement to update category value in bank transactions table
     static String bank_userDefinedValue = "";
     public static final String BANK_TRANSACTIONS_TABLE_UPDATE =
@@ -67,7 +72,7 @@ public class DBManager {
     //SQL statement to insert values into credit card transactions table
     public static final String CC_TRANSACTIONS_TABLE_INSERT =
             "INSERT INTO " + TABLE_CC_TRANSACTIONS + " (" + ALL_CC_TRANSACTIONS_COLUMNS + ") VALUES " +
-                    CSV_ETL.loadValuesToDB(CSV_ETL.transformCCs(CSV_ETL.extractCSVFile(csvCap1File), CSV_ETL.extractCSVFile(csvBarFile)));
+                    CSV_ETL.loadValuesToDB(CSV_ETL.transformCCs(CSV_ETL.extractCSVFile(csvCap1File), CSV_ETL.extractCSVFile(csvBarFile)));  //use CSV_ETL methods to retrieve values from files
     //SQL statement to update category value in credit card transactions table
     static String cc_userDefinedValue = "";
     public static final String CC_TRANSACTIONS_TABLE_UPDATE =
@@ -144,8 +149,9 @@ public class DBManager {
             String desc = rs.getString(1);
             String catg = rs.getString(2);
             String amt = Double.toString(rs.getDouble(3));
-            String date = rs.getString(4);
-            ArrayList<String> values = new ArrayList<>(Arrays.asList(desc, catg, amt, date));
+            String bal = Double.toString(rs.getDouble(4));
+            String date = rs.getString(5);
+            ArrayList<String> values = new ArrayList<>(Arrays.asList(desc, catg, amt, bal, date));
             myArr.add(values);
         }
         System.out.println(myArr.toString());

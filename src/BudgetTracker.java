@@ -1,8 +1,11 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import Model.BalanceSheet;
+import View.MainScrn;
+import javafx.application.Application;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -18,6 +21,17 @@ public class BudgetTracker {
 
     public static void main(String[] args){
 //        System.out.println("Hello World!");
+        Application.launch(MainScrn.class, args);
+
+
+
+
+//        try {
+//            System.out.println(makeBalanceSheet("September Balance Sheet", "9/1/2018", "9/30/2018"));
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+
 
 //        String path = "C:\\Users\\Jerali\\Documents\\Github\\budget_tracker\\BudgetTrackerTestData\\";
 //        String csvAspFile = path + "Aspiration.csv";
@@ -51,7 +65,7 @@ public class BudgetTracker {
 //        expenses.put("Parking", 180.00);
 //        expenses.put("Credit Card", 1200.00);
 //
-//        BalanceSheet novBalSht = new BalanceSheet("November Balance Sheet", 4200, expenses,
+//        Model.BalanceSheet novBalSht = new Model.BalanceSheet("November Balance Sheet", 4200, expenses,
 //                LocalDate.of(2018,11,1), LocalDate.of(2018,11,30));
 //
 //        novBalSht.printBalanceSheet();
@@ -77,9 +91,14 @@ public class BudgetTracker {
 
 
 
+//        try {
+//            System.out.println(getBankBalance("9/14/2018"));
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
 //        try {
-//            whenIsPay("2018-11-09");
+//            whenIsPay("2018-11-02");
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
@@ -95,6 +114,15 @@ public class BudgetTracker {
 
     }
 
+//    private Stage primaryStage;
+//    /*
+//    Method to start GUI by creating primary stage
+//     */
+//    @Override
+//    public void start(Stage primaryStage) throws Exception {
+//        this.primaryStage = primaryStage;
+//        this.primaryStage.setTitle("Budget Tracker");
+//    }
 
 
     /*
@@ -126,5 +154,64 @@ public class BudgetTracker {
         }
     }
 
+    /*
+    Method to return current bank balance
+    Assumption -- if date contains multiple entries, most current entry returned first
+    @param date the date assigned to the balance query
+     */
+    private static double getBankBalance(String date) throws SQLException {
+        System.out.println(date);
+        String selectStmt = "SELECT balance FROM " + DBManager.TABLE_BANK_TRANSACTIONS +
+                " WHERE date = '" + date + "'";
+        System.out.println(selectStmt);
+
+        ArrayList<Double> myArr = new ArrayList<>();  //create list in case of multiple entries on the same date
+
+        Connection conn = DBManager.connectToDB();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(selectStmt);
+
+        while (rs.next()){
+            double result = rs.getDouble(1);
+            myArr.add(result);
+        }
+        conn.close();
+        return myArr.get(0);  //return the first entry as it is assumed to be the most current
+    }
+
+
+    /*
+    Method to pull data from DB to create a balance sheet given a user defined time frame
+     */
+    private static String makeBalanceSheet(String balName, String startDate, String endDate) throws SQLException {
+        //income select query
+        String stmtGetIn = "SELECT description, amount FROM bank_transactions " +
+                "WHERE (date > '" + startDate + "' OR date < '" + endDate + "') AND amount > 0";
+        System.out.println(stmtGetIn);
+        //expense select query
+        String stmtGetEx = "SELECT description, amount FROM bank_transactions " +
+                "WHERE (date > '" + startDate + "' OR date < '" + endDate + "') AND amount < 0;";
+        System.out.println(stmtGetEx);
+
+        Connection conn = DBManager.connectToDB();
+        Statement stmtIn = conn.createStatement();
+        Statement stmtEx = conn.createStatement();
+        ResultSet rsGetIn = stmtIn.executeQuery(stmtGetIn);
+        ResultSet rsGetEx = stmtEx.executeQuery(stmtGetEx);
+
+        Map<String, Double> income = new HashMap<>();
+        Map<String, Double> expenses = new HashMap<>();
+
+        while(rsGetIn.next()){
+            income.put(rsGetIn.getString(1), rsGetIn.getDouble(2));
+        }
+        while(rsGetEx.next()){
+            expenses.put(rsGetEx.getString(1), rsGetEx.getDouble(2));
+        }
+
+        BalanceSheet septBalSht = new BalanceSheet(balName, startDate, endDate, income, expenses);
+        conn.close();
+        return septBalSht.getBalanceSheet();
+    }
 
 }

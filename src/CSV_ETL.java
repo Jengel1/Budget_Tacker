@@ -53,7 +53,7 @@ public class CSV_ETL {
         ArrayList<String> transformedListOfValues = new ArrayList<>();
         String newTransaction = "";
         for(String[] s : list){
-            newTransaction = "'" + s[1] + "', '', " + s[2] + ", '" + s[0] + "'";
+            newTransaction = "'" + s[1] + "', '', " + s[2] + ", " + s[3] + ", '" + s[0] + "'";
 //            System.out.println(newTransaction);
             transformedListOfValues.add(newTransaction);
         }
