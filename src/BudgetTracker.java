@@ -1,11 +1,13 @@
 import Model.BalanceSheet;
-import View.MainScrn;
+import Model.DBManager;
+import View_Controller.MainScrn;
 import javafx.application.Application;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -22,8 +24,11 @@ public class BudgetTracker {
     public static void main(String[] args){
 //        System.out.println("Hello World!");
         Application.launch(MainScrn.class, args);
-
-
+//        try {
+//            getDogBreakdown(10, 53.76, 52.26, 43.65, 18, 567);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
 
 //        try {
@@ -38,22 +43,22 @@ public class BudgetTracker {
 //        String csvCap1File = path + "CapitalOne.csv";
 //        String csvBarFile = path + "Barclay.csv";
 //        System.out.println("Bank Values:");
-////        CSV_ETL.transformAspiration(CSV_ETL.extractCSVFile(csvAspFile));
-//        System.out.println(CSV_ETL.loadValuesToDB(CSV_ETL.transformAspiration(CSV_ETL.extractCSVFile(csvAspFile))));
+////        Model.CSV_ETL.transformAspiration(Model.CSV_ETL.extractCSVFile(csvAspFile));
+//        System.out.println(Model.CSV_ETL.loadValuesToDB(Model.CSV_ETL.transformAspiration(Model.CSV_ETL.extractCSVFile(csvAspFile))));
 //        System.out.println();
 //        System.out.println("CC Values");
-////        CSV_ETL.transformCCs(CSV_ETL.extractCSVFile(csvCap1File), CSV_ETL.extractCSVFile(csvBarFile));
-//        System.out.println(CSV_ETL.loadValuesToDB(CSV_ETL.transformCCs(CSV_ETL.extractCSVFile(csvCap1File), CSV_ETL.extractCSVFile(csvBarFile))));
+////        Model.CSV_ETL.transformCCs(Model.CSV_ETL.extractCSVFile(csvCap1File), Model.CSV_ETL.extractCSVFile(csvBarFile));
+//        System.out.println(Model.CSV_ETL.loadValuesToDB(Model.CSV_ETL.transformCCs(Model.CSV_ETL.extractCSVFile(csvCap1File), Model.CSV_ETL.extractCSVFile(csvBarFile))));
 
 //        try {
-//            DBManager.createBankTable();
-//            DBManager.createCCTable();
-//            DBManager.insertIntoBankTable();
-//            DBManager.insertIntoCCTable();
-//            DBManager.getBankValues();
-//            DBManager.getCCValues();
-////            DBManager.dropBankTable();
-////            DBManager.dropCCTable();
+//            Model.DBManager.createBankTable();
+//            Model.DBManager.createCCTable();
+//            Model.DBManager.insertIntoBankTable();
+//            Model.DBManager.insertIntoCCTable();
+//            Model.DBManager.getBankValues();
+//            Model.DBManager.getCCValues();
+////            Model.DBManager.dropBankTable();
+////            Model.DBManager.dropCCTable();
 //        } catch (SQLException e){
 //            System.out.println(e.getMessage());
 //        }
@@ -124,6 +129,38 @@ public class BudgetTracker {
 //        this.primaryStage.setTitle("Budget Tracker");
 //    }
 
+    /*
+    print out breakdown for dog and util numbers
+    this method will be modified once GUI is constructed
+    this method will create a file in the Financial Doc
+    inputs may need to be modified as well
+     */
+    private static void getDogBreakdown(int mon, double dogFood1, double dogFood2, double meds, double nails, double sitter) throws ParseException {
+        double cellPhone = 113;
+        double netflix_hulu = 29;
+        double util_ttl = cellPhone + netflix_hulu;
+        double dogFoodTotal = dogFood1 + dogFood2;
+        double dogTotal = dogFoodTotal + meds + nails + sitter;
+
+        String month = new DateFormatSymbols().getMonths()[mon - 1];
+        System.out.println(
+                month + " #s" + "\n\n" +
+                "phone = " + cellPhone + "\n" +
+                "netflix/hulu 14+15 = " + netflix_hulu + "\n" +
+                month + "_util_ttl = " + util_ttl + " / 2 = " + (util_ttl / 2) + "\n\n" +
+                "dog food = " + dogFood1 + " + " + dogFood2 + " = " + dogFoodTotal + "\n" +
+                "Will meds = " + meds + "\n" +
+                "Will nails = " + nails + "\n" +
+                "dog sitting = " + sitter + "\n" +
+                month + "_dog_ttl = " + dogTotal + " / 2 = " + (dogTotal / 2) + "\n\n" +
+                month + " ttls" + "\n" +
+                "a'owes " + month + "_dog_ttl = " + (dogTotal / 2) + "\n" +
+                "j'owes " + month + "_util_ttl = " + (util_ttl / 2) + "\n\n" +
+                month + "_Grand_Final ~ a'owes = " + ((dogTotal / 2) - (util_ttl / 2))
+        );
+    }
+
+
 
     /*
     Method prints out the date of each paycheck for 1 year
@@ -159,7 +196,7 @@ public class BudgetTracker {
     Assumption -- if date contains multiple entries, most current entry returned first
     @param date the date assigned to the balance query
      */
-    private static double getBankBalance(String date) throws SQLException {
+    public static double getBankBalance(String date) throws SQLException {
         System.out.println(date);
         String selectStmt = "SELECT balance FROM " + DBManager.TABLE_BANK_TRANSACTIONS +
                 " WHERE date = '" + date + "'";

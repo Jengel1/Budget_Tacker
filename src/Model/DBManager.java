@@ -1,3 +1,5 @@
+package Model;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +43,7 @@ public class DBManager {
     //SQL statement to insert values into bank transactions table
     public static final String BANK_TRANSACTIONS_TABLE_INSERT =
             "INSERT INTO " + TABLE_BANK_TRANSACTIONS + " (" + ALL_BANK_TRANSACTIONS_COLUMNS + ") VALUES " +
-                    CSV_ETL.loadValuesToDB(CSV_ETL.transformAspiration(CSV_ETL.extractCSVFile(csvAspFile)));  //use CSV_ETL methods to retrieve values from files
+                    CSV_ETL.loadValuesToDB(CSV_ETL.transformAspiration(CSV_ETL.extractCSVFile(csvAspFile)));  //use Model.CSV_ETL methods to retrieve values from files
     //SQL statement to update category value in bank transactions table
     static String bank_userDefinedValue = "";
     public static final String BANK_TRANSACTIONS_TABLE_UPDATE =
@@ -72,7 +74,7 @@ public class DBManager {
     //SQL statement to insert values into credit card transactions table
     public static final String CC_TRANSACTIONS_TABLE_INSERT =
             "INSERT INTO " + TABLE_CC_TRANSACTIONS + " (" + ALL_CC_TRANSACTIONS_COLUMNS + ") VALUES " +
-                    CSV_ETL.loadValuesToDB(CSV_ETL.transformCCs(CSV_ETL.extractCSVFile(csvCap1File), CSV_ETL.extractCSVFile(csvBarFile)));  //use CSV_ETL methods to retrieve values from files
+                    CSV_ETL.loadValuesToDB(CSV_ETL.transformCCs(CSV_ETL.extractCSVFile(csvCap1File), CSV_ETL.extractCSVFile(csvBarFile)));  //use Model.CSV_ETL methods to retrieve values from files
     //SQL statement to update category value in credit card transactions table
     static String cc_userDefinedValue = "";
     public static final String CC_TRANSACTIONS_TABLE_UPDATE =

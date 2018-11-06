@@ -1,9 +1,11 @@
-package View;
+package View_Controller;
 
 import Model.Envelope;
-import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by Jengel1 on 10/20/2018.
+ * Created by Jengel1 on 11/5/2018.
  */
-public class MainScrn extends Application {
+public class EnvelopeTab {
 
     private Stage primaryStage;
 
@@ -41,15 +43,18 @@ public class MainScrn extends Application {
             new Envelope("Msc Expenses", 200),
             new Envelope("Savings", 250)
     ));
+
+    ArrayList<GridPane> listOfEnvelopeGPs = new ArrayList<>();
+
     /*
     Method to start GUI by creating primary stage
      */
-    @Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Budget Tracker");
-        initGUI();
-    }
+//    @Override
+//    public void start(Stage primaryStage) {
+//        this.primaryStage = primaryStage;
+//        this.primaryStage.setTitle("Budget Tracker");
+//        initGUI();
+//    }
 
     private void initGUI() {
         Group root = new Group();
@@ -61,32 +66,47 @@ public class MainScrn extends Application {
         GridPane gp_center = new GridPane();
         int columnIndex = 0;
         int rowIndex = 0;
-        for(int i = 0; i < listOfEnvelopes.size(); i++){
-            Label lbl_name = new Label(listOfEnvelopes.get(i).getName());
+        for(int i = 0; i < listOfEnvelopes.size(); i++){  //loop through listOfEnvelopes
+            Label lbl_name = new Label(listOfEnvelopes.get(i).getName());  //envelope name
             lbl_name.setPadding(new Insets(0,5,0,0));
-            Label lbl_amount = new Label("Goal: " + listOfEnvelopes.get(i).getAmount());
+            Label lbl_amount = new Label("Goal: " + listOfEnvelopes.get(i).getAmount());  //envelope goal
             lbl_amount.setPadding(new Insets(0,0,0,5));
 
-            TextField tf = new TextField();
+            TextField tf = new TextField("0");  //to hold current amount in envelope
             tf.setMaxSize(60,10);
 
-            Button btn_plus = new Button("+");
+            Button btn_plus = new Button("+");  //add money to envelope
+            btn_plus.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    int currentAmt = Integer.parseInt(tf.getText());
+                    tf.setText(String.valueOf(currentAmt + 20));
+                }
+            });
             btn_plus.setPadding(new Insets(-2,0,-2,0));
             btn_plus.setMinSize(25,5);
 
-            Button btn_minus = new Button("-");
+            Button btn_minus = new Button("-");  //subtract money from envelope
+            btn_minus.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    int currentAmt = Integer.parseInt(tf.getText());
+                    //add logic to ensure envelope cannot have a negative amount
+                    tf.setText(String.valueOf(currentAmt - 20));
+                }
+            });
             btn_minus.setPadding(new Insets(-2,0,-2,0));
             btn_minus.setMinSize(25,5);
 
-            FlowPane fp = new FlowPane(Orientation.VERTICAL);
+            FlowPane fp = new FlowPane(Orientation.VERTICAL);  //holds the plus and minus btns
             fp.setPrefHeight(26);
             fp.getChildren().addAll(btn_plus, btn_minus);
 
-            GridPane gp = new GridPane();
-            gp.getColumnConstraints().add(0, new ColumnConstraints(86));
-            gp.getColumnConstraints().add(1, new ColumnConstraints(25));
-            gp.getColumnConstraints().add(2, new ColumnConstraints(60));
-            gp.getColumnConstraints().add(3, new ColumnConstraints(80));
+            GridPane gp = new GridPane();  //grid pane to hold btns, tf, & lbls
+            gp.getColumnConstraints().add(0, new ColumnConstraints(86));  //name of envelope
+            gp.getColumnConstraints().add(1, new ColumnConstraints(25));  //btns
+            gp.getColumnConstraints().add(2, new ColumnConstraints(60));  //tf
+            gp.getColumnConstraints().add(3, new ColumnConstraints(80));  //goal of envelope
             GridPane.setConstraints(lbl_name, 0,0);
             GridPane.setConstraints(fp, 1,0);
             GridPane.setConstraints(tf, 2,0);
@@ -96,6 +116,8 @@ public class MainScrn extends Application {
             gp.setHalignment(lbl_amount, HPos.LEFT);
 //        gp.setGridLinesVisible(true);
             gp.getChildren().addAll(lbl_name, fp, tf, lbl_amount);
+
+            listOfEnvelopeGPs.add(gp);  //add gridpane to listOfEnvelopeGPs for controller access
 
             GridPane.setConstraints(gp, columnIndex, rowIndex);
             gp_center.setVgap(10);
@@ -145,13 +167,21 @@ public class MainScrn extends Application {
         FlowPane in Bottom of BorderPane
          */
         FlowPane fp_bottom = new FlowPane();
-        Button btn1 = new Button("Envelopes");
-        Button btn2 = new Button("Reports");
-        Button btn3 = new Button("Ledger");
-        Button btn4 = new Button("Exit");
+        Button btn1 = new Button("Categories");
+        btn1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+//                Application.launch(CategoriesTab.class, null);  //Application launch cannot be called more than once
+//                primaryStage.setScene(CategoriesTab.class.);
+            }
+        });
+        Button btn2 = new Button("Envelopes");
+        Button btn3 = new Button("Reports");
+        Button btn4 = new Button("Ledger");
+        Button btn5 = new Button("Exit");
         fp_bottom.setHgap(10);
         fp_bottom.setAlignment(Pos.CENTER);
-        fp_bottom.getChildren().addAll(btn1, btn2, btn3, btn4);
+        fp_bottom.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
 
         /*
         FlowPane in Top of BorderPane
@@ -175,6 +205,44 @@ public class MainScrn extends Application {
         root.getChildren().add(bp);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void updateEnvAmount(ActionEvent e) {
+        Button btn = (Button) e.getSource();
+        GridPane gp = (GridPane) btn.getParent();
+        Node node_tf = gp.getChildren().get(2);
+        if(node_tf instanceof TextField){
+            ((TextField) node_tf).setText("new Text");
+        }
+    }
+
+    /*
+    Method allows controller access to gridPanes
+     */
+    public GridPane getEnvelopeGP(String envName){
+        GridPane gp = null;
+        boolean found = false;
+        int index = 0;
+        while (!found){
+            Node nameNode = listOfEnvelopeGPs.get(index).getChildren().get(0);
+            if(nameNode instanceof Label){
+                if(((Label) nameNode).getText().equals(envName)){
+                    gp = listOfEnvelopeGPs.get(index);
+                    found = true;
+                }
+            }
+            index++;
+        }
+//        for(int i = 0; i < listOfEnvelopeGPs.size(); i++){
+//            Node nameNode = listOfEnvelopeGPs.get(i).getChildren().get(0);
+//            if(nameNode instanceof Label){
+//                if(((Label) nameNode).getText().equals(envName)){
+//                    gp = listOfEnvelopeGPs.get(i);
+//                    break;
+//                }
+//            }
+//        }
+        return gp;
     }
 
 }
