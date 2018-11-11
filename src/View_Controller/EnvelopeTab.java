@@ -4,9 +4,7 @@ import Model.Envelope;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -14,7 +12,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +21,7 @@ import java.util.Arrays;
  */
 public class EnvelopeTab {
 
-    private Stage primaryStage;
+//    private Stage primaryStage;
 
     ArrayList<Envelope> listOfEnvelopes = new ArrayList<>(Arrays.asList(
             new Envelope("Rent", 1403.33),
@@ -44,7 +41,7 @@ public class EnvelopeTab {
             new Envelope("Savings", 250)
     ));
 
-    ArrayList<GridPane> listOfEnvelopeGPs = new ArrayList<>();
+//    ArrayList<GridPane> listOfEnvelopeGPs = new ArrayList<>();
 
     /*
     Method to start GUI by creating primary stage
@@ -56,14 +53,17 @@ public class EnvelopeTab {
 //        initGUI();
 //    }
 
-    private void initGUI() {
-        Group root = new Group();
-        Scene scene = new Scene(root,800, 600);
+    public EnvelopeTab(){}
+
+    public BorderPane initGUI() {
+//        Group root = new Group();
+//        Scene scene = new Scene(root,800, 600);
 
         /*
         GridPane in Center of BorderPane
          */
         GridPane gp_center = new GridPane();
+//        gp_center.setVgap(100);
         int columnIndex = 0;
         int rowIndex = 0;
         for(int i = 0; i < listOfEnvelopes.size(); i++){  //loop through listOfEnvelopes
@@ -117,13 +117,13 @@ public class EnvelopeTab {
 //        gp.setGridLinesVisible(true);
             gp.getChildren().addAll(lbl_name, fp, tf, lbl_amount);
 
-            listOfEnvelopeGPs.add(gp);  //add gridpane to listOfEnvelopeGPs for controller access
+//            listOfEnvelopeGPs.add(gp);  //add gridpane to listOfEnvelopeGPs for controller access
 
             GridPane.setConstraints(gp, columnIndex, rowIndex);
             gp_center.setVgap(10);
             gp_center.getChildren().add(gp);
             rowIndex++;
-            if(rowIndex == 10){
+            if(rowIndex == 10 || rowIndex == 20){
                 columnIndex++;
                 rowIndex = 0;
             }
@@ -163,31 +163,31 @@ public class EnvelopeTab {
         fp_left.setVgap(30);
         fp_left.getChildren().addAll(fp_cusion, fp_current, fp_float);
 
-        /*
-        FlowPane in Bottom of BorderPane
-         */
-        FlowPane fp_bottom = new FlowPane();
-        Button btn1 = new Button("Categories");
-        btn1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-//                Application.launch(CategoriesTab.class, null);  //Application launch cannot be called more than once
-//                primaryStage.setScene(CategoriesTab.class.);
-            }
-        });
-        Button btn2 = new Button("Envelopes");
-        Button btn3 = new Button("Reports");
-        Button btn4 = new Button("Ledger");
-        Button btn5 = new Button("Exit");
-        fp_bottom.setHgap(10);
-        fp_bottom.setAlignment(Pos.CENTER);
-        fp_bottom.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
+//        /*
+//        FlowPane in Bottom of BorderPane
+//         */
+//        FlowPane fp_bottom = new FlowPane();
+//        Button btn1 = new Button("Categories");
+//        btn1.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+////                Application.launch(CategoriesTab.class, null);  //Application launch cannot be called more than once
+////                primaryStage.setScene(CategoriesTab.class.);
+//            }
+//        });
+//        Button btn2 = new Button("Envelopes");
+//        Button btn3 = new Button("Reports");
+//        Button btn4 = new Button("Ledger");
+//        Button btn5 = new Button("Exit");
+//        fp_bottom.setHgap(10);
+//        fp_bottom.setAlignment(Pos.CENTER);
+//        fp_bottom.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
 
         /*
         FlowPane in Top of BorderPane
          */
         FlowPane fp_top = new FlowPane();
-        Label lbl_appName = new Label("Budget Tracker");
+        Label lbl_appName = new Label("Budget Envelopes");
         fp_top.setAlignment(Pos.CENTER);
         fp_top.setPrefHeight(50);
         fp_top.setPrefWidth(800);
@@ -197,16 +197,22 @@ public class EnvelopeTab {
         BorderPane in root
          */
         BorderPane bp = new BorderPane();
+        bp.setPrefSize(800, 490);
         bp.setTop(fp_top);
         bp.setLeft(fp_left);
         bp.setCenter(gp_center);
-        bp.setBottom(fp_bottom);
 
-        root.getChildren().add(bp);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+//        bp.setBottom(fp_bottom);
+
+//        root.getChildren().add(bp);
+//        primaryStage.setScene(scene);
+//        primaryStage.show();
+        return bp;
     }
 
+    /*
+    Updates the goal amount of each envelope
+     */
     private void updateEnvAmount(ActionEvent e) {
         Button btn = (Button) e.getSource();
         GridPane gp = (GridPane) btn.getParent();
@@ -216,33 +222,33 @@ public class EnvelopeTab {
         }
     }
 
-    /*
-    Method allows controller access to gridPanes
-     */
-    public GridPane getEnvelopeGP(String envName){
-        GridPane gp = null;
-        boolean found = false;
-        int index = 0;
-        while (!found){
-            Node nameNode = listOfEnvelopeGPs.get(index).getChildren().get(0);
-            if(nameNode instanceof Label){
-                if(((Label) nameNode).getText().equals(envName)){
-                    gp = listOfEnvelopeGPs.get(index);
-                    found = true;
-                }
-            }
-            index++;
-        }
-//        for(int i = 0; i < listOfEnvelopeGPs.size(); i++){
-//            Node nameNode = listOfEnvelopeGPs.get(i).getChildren().get(0);
+//    /*
+//    Method allows controller access to gridPanes
+//     */
+//    public GridPane getEnvelopeGP(String envName){
+//        GridPane gp = null;
+//        boolean found = false;
+//        int index = 0;
+//        while (!found){
+//            Node nameNode = listOfEnvelopeGPs.get(index).getChildren().get(0);
 //            if(nameNode instanceof Label){
 //                if(((Label) nameNode).getText().equals(envName)){
-//                    gp = listOfEnvelopeGPs.get(i);
-//                    break;
+//                    gp = listOfEnvelopeGPs.get(index);
+//                    found = true;
 //                }
 //            }
+//            index++;
 //        }
-        return gp;
-    }
+////        for(int i = 0; i < listOfEnvelopeGPs.size(); i++){
+////            Node nameNode = listOfEnvelopeGPs.get(i).getChildren().get(0);
+////            if(nameNode instanceof Label){
+////                if(((Label) nameNode).getText().equals(envName)){
+////                    gp = listOfEnvelopeGPs.get(i);
+////                    break;
+////                }
+////            }
+////        }
+//        return gp;
+//    }
 
 }
